@@ -14,13 +14,14 @@
 #include <stdio.h>
 #include <string.h>
 
+
 class SFMLApplication {
   sf::ContextSettings context_settings;
   sf::Window window;
 
 public:
   SFMLApplication() : context_settings(24),
-                      window(sf::VideoMode(1920, 1080), "SFML Example", sf::Style::Default, context_settings) {
+                      window(sf::VideoMode(1920/2, 1080), "SFML Example", sf::Style::Default, context_settings) {
     window.setFramerateLimit(144);
     window.setVerticalSyncEnabled(true);
 
@@ -64,6 +65,8 @@ public:
         }
       }
 
+      float t = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+
       //Draw
       //Real code starts here
       //
@@ -76,6 +79,8 @@ public:
 
       glColor3f(1.0f, 0.0f, 0.0f);      // Set the color to red
 
+      glRotatef(t*5, 0.0f, 0.0f, 1.0f);
+      
       glBegin(GL_QUADS);
       // Drawing a face facing the camera
       // Start at bottom left corner, moving clockwise
@@ -84,6 +89,8 @@ public:
       glVertex3f(-1.0f, 1.0f, 0.0f);
       glVertex3f(1.0f, 1.0f, 0.0f);
       glVertex3f(1.0f, 0.0f, 0.0f);
+
+      
       glEnd();
 
       //Swap buffer (show result)
