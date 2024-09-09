@@ -11,3 +11,6 @@
  - Applying rotation on all rows (inputting notations maybe?)
 
  ### Notation: R for right hand rotation and R' for counter-clockwise etc.
+
+ # Bugs
+ - Resizing in i3
