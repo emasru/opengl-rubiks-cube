@@ -22,8 +22,8 @@ std::tuple<GLfloat, GLfloat, GLfloat> rubiksWhite(1.0f, 1.0f, 1.0f);
 std::tuple<GLfloat, GLfloat, GLfloat> rubiksYellow(1.0f, 0.835f, 0.0f);
 std::tuple<GLfloat, GLfloat, GLfloat> rubiksRed(0.714f, 0.071f, 0.106f);
 std::tuple<GLfloat, GLfloat, GLfloat> rubiksBlue(0.0f, 0.275f, 0.678f);
-std::tuple<GLfloat, GLfloat, GLfloat> rubiksOrange(1.0f, 0.345f, 0.0f);
-std::tuple<GLfloat, GLfloat, GLfloat> rubiksGreen(1.0f, 0.608f, 0.282f);
+std::tuple<GLfloat, GLfloat, GLfloat> rubiksOrange(0.765f, 0.345f, 0.0f);
+std::tuple<GLfloat, GLfloat, GLfloat> rubiksGreen(0.0f, 0.608f, 0.282f);
 std::tuple<GLfloat, GLfloat, GLfloat> rubiksBlack(0.0f, 0.0f, 0.0f);
 
 
@@ -87,13 +87,67 @@ public:
 
       //Draw
       //Real code starts here
-      //
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glLoadIdentity();
 
       gluLookAt(radius * cos(angle), camera.y+3, radius * sin(angle), //Camera position in World Space
                 camera.x, camera.y, 0.0,      //Camera looks towards this position
                 0.0, 1.0, 0.0);               //Up
+
+
+      // Storing the rubiks cube
+      RubiksPart rubiksCube[3][3][3];
+      // Render and store all the cubes
+      // Indexing: bottom left front is the origin
+      for (int x = 0; x < 3; x++)
+      {
+        for (int y = 0; y < 3; y++)
+        {
+          for (int z = 0; z < 3; z++)
+          {
+            std::tuple<GLfloat, GLfloat, GLfloat> bottomColor = rubiksBlack;
+            std::tuple<GLfloat, GLfloat, GLfloat> topColor = rubiksBlack;
+            std::tuple<GLfloat, GLfloat, GLfloat> frontColor = rubiksBlack;
+            std::tuple<GLfloat, GLfloat, GLfloat> backColor = rubiksBlack;
+            std::tuple<GLfloat, GLfloat, GLfloat> leftColor = rubiksBlack;
+            std::tuple<GLfloat, GLfloat, GLfloat> rightColor = rubiksBlack;
+
+            if (y == 0)
+            {
+                bottomColor = rubiksWhite;
+            }
+            else if (y == 2)
+            {
+                topColor = rubiksYellow;
+            }
+
+            if (x == 0)
+            {
+                leftColor = rubiksOrange;
+            }
+            else if (x == 2)
+            {
+                rightColor = rubiksRed;
+            }
+
+            if (z == 0)
+            {
+                frontColor = rubiksGreen;
+            }
+            else if (z == 2)
+            {
+                backColor = rubiksBlue;
+            }
+
+            GLfloat length = 0.5;
+            std::tuple<GLfloat, GLfloat, GLfloat> orientation(0.0f, 1.0f, 0.0f);
+            std::tuple<GLfloat, GLfloat, GLfloat> position(0.0f+(x * length), 0.0f+(y * length), 0.0f+(z * length));
+            RubiksPart part(length, position, orientation, bottomColor, topColor, frontColor, rightColor, leftColor, backColor);
+            rubiksCube[x][y][z] = part;
+            part.drawCube();
+          }
+        }
+      }
 
 
       GLfloat length = 1;
@@ -103,7 +157,14 @@ public:
       RubiksPart cube(length, position, orientation, rubiksWhite, rubiksYellow, rubiksGreen,
               rubiksOrange, rubiksRed, rubiksBlue);
 
-      cube.drawCube();
+      //cube.drawCube();
+
+      std::tuple<GLfloat, GLfloat, GLfloat> position2(1.0f, 0.0f, 0.0f);
+
+      RubiksPart cube2(length, position2, orientation, rubiksWhite, rubiksYellow, rubiksGreen,
+              rubiksOrange, rubiksRed, rubiksBlue);
+
+      //cube2.drawCube();
 
       window.display();
     }

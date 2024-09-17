@@ -49,6 +49,8 @@ public:
     {
     }
 
+    RubiksPart(){}
+
     void drawCube()
     {
         // Extract cube position
@@ -57,26 +59,26 @@ public:
         GLfloat posZ = std::get<2>(globalCubeCenterPos);
 
         // Extract cube orientation (orientationVec)
-        GLfloat orientX = std::get<0>(orientationVec);
-        GLfloat orientY = std::get<1>(orientationVec);
-        GLfloat orientZ = std::get<2>(orientationVec);
+        //GLfloat orientX = std::get<0>(orientationVec);
+        //GLfloat orientY = std::get<1>(orientationVec);
+        //GLfloat orientZ = std::get<2>(orientationVec);
 
         // Push the current matrix stack
-        //glPushMatrix();
+        glPushMatrix();
 
         // Translate to the global position of the cube
         glTranslatef(posX, posY, posZ);
 
         // Compute the angle and axis for orientation
         // Assuming the default orientation is along (0, 1, 0), the Y-axis
-        GLfloat defaultVec[] = {0.0f, 1.0f, 0.0f};  // Upward by default
+        //GLfloat defaultVec[] = {0.0f, 1.0f, 0.0f};  // Upward by default
 
         // Now calculate the angle and axis for rotation (if needed)
         // You can use cross product and dot product for this
 
         // Rotate cube based on orientationVec (simplified case; you'll need to compute a rotation matrix)
         // This assumes the orientationVec is a unit vector and glRotatef works well with it
-        glRotatef(45.0f, orientX, orientY, orientZ); // Use the calculated angle and axis
+        //glRotatef(0.0f, orientX, orientY, orientZ); // Use the calculated angle and axis
 
         // Draw the cube's 6 faces
         GLfloat halfLength = cubeLength / 2.0f;
@@ -99,18 +101,18 @@ public:
         glVertex3f(-halfLength, -halfLength, -halfLength);
         glEnd();
 
-        // Front face (z = halfLength)
+        // Back face (z = halfLength)
         glBegin(GL_QUADS);
-        glColor3f(std::get<0>(frontColor), std::get<1>(frontColor), std::get<2>(frontColor));
+        glColor3f(std::get<0>(backColor), std::get<1>(backColor), std::get<2>(backColor));
         glVertex3f(-halfLength, -halfLength, halfLength);
         glVertex3f(halfLength, -halfLength, halfLength);
         glVertex3f(halfLength, halfLength, halfLength);
         glVertex3f(-halfLength, halfLength, halfLength);
         glEnd();
 
-        // Back face (z = -halfLength)
+        // Front face (z = -halfLength)
         glBegin(GL_QUADS);
-        glColor3f(std::get<0>(backColor), std::get<1>(backColor), std::get<2>(backColor));
+        glColor3f(std::get<0>(frontColor), std::get<1>(frontColor), std::get<2>(frontColor));
         glVertex3f(-halfLength, halfLength, -halfLength);
         glVertex3f(halfLength, halfLength, -halfLength);
         glVertex3f(halfLength, -halfLength, -halfLength);
@@ -136,7 +138,7 @@ public:
         glEnd();
 
         // Pop the current matrix stack
-        //glPopMatrix();
+        glPopMatrix();
     }
 };
 
