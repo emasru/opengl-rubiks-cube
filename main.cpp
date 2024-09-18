@@ -52,6 +52,8 @@ public:
     myargv[0] = strdup("fakeappname");
     glutInit(&myargc, myargv);
 
+    RubiksCube rubiksCube;
+
     bool running = true;
     while (running) {
       //Handle events
@@ -86,8 +88,7 @@ public:
                 camera.x, camera.y, 0.0,      //Camera looks towards this position
                 0.0, 1.0, 0.0);               //Up
 
-      RubiksCube rubiksCube;
-      rubiksCube.drawCube();
+      rubiksCube.drawCube(t);
 
       window.display();
     }

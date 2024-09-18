@@ -30,6 +30,10 @@ public:
     std::tuple<GLfloat, GLfloat, GLfloat> leftColor;
     std::tuple<GLfloat, GLfloat, GLfloat> backColor;
 
+    // Applied when rotation is needed
+    glm::vec3 anchorPoint;
+    float angle;
+
     RubiksPart(GLfloat l,
                std::tuple<GLfloat, GLfloat, GLfloat> pos,
                std::tuple<GLfloat, GLfloat, GLfloat> orientation,
@@ -49,9 +53,17 @@ public:
           leftColor(leftC),
           backColor(backC)
     {
+        anchorPoint = glm::vec3(0.0f, 0.0f, 0.0f);
+        angle = 0.0f;
     }
 
     RubiksPart(){}
+
+    void rotateAround(glm::vec3 anchorPos, float a)
+    {
+        anchorPoint = anchorPos;
+        angle = a;
+    }
 
     void drawCube()
     {
@@ -60,27 +72,21 @@ public:
         GLfloat posY = std::get<1>(globalCubeCenterPos);
         GLfloat posZ = std::get<2>(globalCubeCenterPos);
 
-        // Extract cube orientation (orientationVec)
-        //GLfloat orientX = std::get<0>(orientationVec);
-        //GLfloat orientY = std::get<1>(orientationVec);
-        //GLfloat orientZ = std::get<2>(orientationVec);
-
         // Push the current matrix stack
         glPushMatrix();
 
+
+        // Translate the cube so that the anchor point is at the origin
+        glTranslatef(-anchorPoint.x, -anchorPoint.y, -anchorPoint.z);
+
+        // Apply rotation around the origin (anchor point)
+        glRotatef(angle, 1.0f, 0.0f, 0.0f);
+
+        // Translate the cube back to its original position
+        glTranslatef(anchorPoint.x, anchorPoint.y, anchorPoint.z);
+
         // Translate to the global position of the cube
         glTranslatef(posX, posY, posZ);
-
-        // Compute the angle and axis for orientation
-        // Assuming the default orientation is along (0, 1, 0), the Y-axis
-        //GLfloat defaultVec[] = {0.0f, 1.0f, 0.0f};  // Upward by default
-
-        // Now calculate the angle and axis for rotation (if needed)
-        // You can use cross product and dot product for this
-
-        // Rotate cube based on orientationVec (simplified case; you'll need to compute a rotation matrix)
-        // This assumes the orientationVec is a unit vector and glRotatef works well with it
-        //glRotatef(0.0f, orientX, orientY, orientZ); // Use the calculated angle and axis
 
         // Draw the cube's 6 faces
         GLfloat halfLength = cubeLength / 2.0f;
@@ -212,14 +218,35 @@ class RubiksCube
                 std::tuple<GLfloat, GLfloat, GLfloat> position(0.0f+(x * length), 0.0f+(y * length), 0.0f+(z * length));
                 RubiksPart part(length, position, orientation, bottomColor, topColor, frontColor, rightColor, leftColor, backColor);
                 rubiksCube[x][y][z] = part;
-                part.drawCube();
               }
             }
           }
         }
 
-        void drawCube()
+        void rotateLeftFace(float t)
         {
+            glm::vec3 centerOfRotation(0.0f, -0.5f, -0.5f);
+            //glm::vec3 centerOfRotation(0.0f, 0.0f, 0.0f);
+            // Select with x = 0 gives all cubes on the left face
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 3; y++)
+                {
+                    for (int z = 0; z < 3; z++)
+                    {
+                        if (x == 0)
+                        {
+                            rubiksCube[x][y][z].rotateAround(centerOfRotation, t*16);
+                        }
+                    }
+                }
+            }
+        }
+
+        void drawCube(float t)
+        {
+            rotateLeftFace(t);
+
             for (int x = 0; x < 3; x++)
             {
                 for (int y = 0; y < 3; y++)
@@ -231,4 +258,6 @@ class RubiksCube
                 }
             }
         }
+
+
 };
